@@ -476,38 +476,50 @@ const SongEditor = forwardRef<SongEditorRef, Props>(function SongEditor(
                       <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        style={styles.characterStrip}>
-                        <View style={{flexDirection: lines[i].rtl ? 'row-reverse' : 'row'}}>
-                        {lines[i].lyrics.split('').map((char, j) => {
-                          const hasChord = lines[i].chords.some(
-                            c => c.charIndex === j,
-                          );
-                          const isSelected =
-                            selectedChordIndex !== null &&
-                            lines[i].chords[selectedChordIndex]?.charIndex ===
-                              j;
-                          const isPlacementTarget =
-                            !hasChord && editingChordAtChar === j;
-
-                          let cellStyle = styles.cellNormal;
-                          if (isSelected) {
-                            cellStyle = styles.cellSelected;
-                          } else if (hasChord) {
-                            cellStyle = styles.cellHasChord;
-                          } else if (isPlacementTarget) {
-                            cellStyle = styles.cellPlacementTarget;
-                          }
-
+                        style={[
+                          styles.characterStrip,
+                          lines[i].rtl && {flexGrow: 0, alignSelf: 'flex-end'},
+                        ]}>
+                        {(() => {
+                          const chars = lines[i].lyrics.split('');
+                          const indices = lines[i].rtl
+                            ? chars.map((_, j) => chars.length - 1 - j)
+                            : chars.map((_, j) => j);
                           return (
-                            <TouchableOpacity
-                              key={j}
-                              style={[styles.cell, cellStyle, {width: charWidth}]}
-                              onPress={() => handleCharacterTap(j)}>
-                              <Text style={styles.cellText}>{char}</Text>
-                            </TouchableOpacity>
+                            <View style={{flexDirection: 'row'}}>
+                            {indices.map(origIndex => {
+                              const char = chars[origIndex];
+                              const hasChord = lines[i].chords.some(
+                                c => c.charIndex === origIndex,
+                              );
+                              const isSelected =
+                                selectedChordIndex !== null &&
+                                lines[i].chords[selectedChordIndex]?.charIndex ===
+                                  origIndex;
+                              const isPlacementTarget =
+                                !hasChord && editingChordAtChar === origIndex;
+
+                              let cellStyle = styles.cellNormal;
+                              if (isSelected) {
+                                cellStyle = styles.cellSelected;
+                              } else if (hasChord) {
+                                cellStyle = styles.cellHasChord;
+                              } else if (isPlacementTarget) {
+                                cellStyle = styles.cellPlacementTarget;
+                              }
+
+                              return (
+                                <TouchableOpacity
+                                  key={origIndex}
+                                  style={[styles.cell, cellStyle, {width: charWidth}]}
+                                  onPress={() => handleCharacterTap(origIndex)}>
+                                  <Text style={styles.cellText}>{char}</Text>
+                                </TouchableOpacity>
+                              );
+                            })}
+                            </View>
                           );
-                        })}
-                        </View>
+                        })()}
                       </ScrollView>
 
                       {isChordInputVisible && (

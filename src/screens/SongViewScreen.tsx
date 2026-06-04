@@ -26,8 +26,15 @@ export default function SongViewScreen({route, navigation}: any) {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('SongEditor', {song: currentSong})
-          }>
-          <Text style={{color: Colors.accent, marginRight: 16, fontSize: 16}}>
+          }
+          style={{
+            backgroundColor: Colors.bgTertiary,
+            borderRadius: 8,
+            paddingVertical: 6,
+            paddingHorizontal: 14,
+            marginRight: 16,
+          }}>
+          <Text style={{color: Colors.accent, fontSize: 16}}>
             Edit
           </Text>
         </TouchableOpacity>

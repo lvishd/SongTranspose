@@ -12,20 +12,37 @@ export default function SongEditorScreen({route, navigation}: any) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
           <TouchableOpacity
             onPress={() => editorRef.current?.handleAddParagraph()}
-            style={{marginRight: 16}}>
-            <Text style={{color: Colors.accent, fontSize: 16}}>+ §</Text>
+            style={{
+              backgroundColor: Colors.bgTertiary,
+              borderRadius: 8,
+              paddingVertical: 6,
+              paddingHorizontal: 12,
+            }}>
+            <Text style={{color: Colors.accent, fontSize: 14}}>+ §</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => editorRef.current?.handleAddLine()}
-            style={{marginRight: 16}}>
-            <Text style={{color: Colors.accent, fontSize: 16}}>+ Line</Text>
+            style={{
+              backgroundColor: Colors.bgTertiary,
+              borderRadius: 8,
+              paddingVertical: 6,
+              paddingHorizontal: 12,
+            }}>
+            <Text style={{color: Colors.accent, fontSize: 14}}>+ Line</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => editorRef.current?.handleSave()}>
-            <Text style={{color: Colors.accent, fontSize: 16, marginRight: 16}}>
+            onPress={() => editorRef.current?.handleSave()}
+            style={{
+              backgroundColor: Colors.accent,
+              borderRadius: 8,
+              paddingVertical: 6,
+              paddingHorizontal: 14,
+              marginRight: 16,
+            }}>
+            <Text style={{color: Colors.accentForeground, fontSize: 14}}>
               Save
             </Text>
           </TouchableOpacity>

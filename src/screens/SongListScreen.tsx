@@ -39,8 +39,14 @@ export default function SongListScreen({navigation}: any) {
       headerRight: () => (
         <TouchableOpacity
           onPress={() => navigation.navigate('SongEditor', {})}
-          style={{marginRight: 16}}>
-          <Text style={{color: Colors.accent, fontSize: 16, fontWeight: 'bold'}}>+</Text>
+          style={{
+            backgroundColor: Colors.accent,
+            borderRadius: 8,
+            paddingVertical: 6,
+            paddingHorizontal: 14,
+            marginRight: 16,
+          }}>
+          <Text style={{color: Colors.accentForeground, fontSize: 16, fontWeight: 'bold'}}>+</Text>
         </TouchableOpacity>
       ),
     });

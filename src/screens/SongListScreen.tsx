@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -33,6 +33,18 @@ export default function SongListScreen({navigation}: any) {
   useEffect(() => {
     seedIfEmpty().then(loadAndSetSongs);
   }, [loadAndSetSongs]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('SongEditor', {})}
+          style={{marginRight: 16}}>
+          <Text style={{color: Colors.accent, fontSize: 16, fontWeight: 'bold'}}>+</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   const handleDelete = (song: Song) => {
     Alert.alert('Delete Song', `Delete "${song.title}"?`, [
@@ -78,14 +90,9 @@ export default function SongListScreen({navigation}: any) {
         renderItem={renderSong}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No songs yet. Tap + to add one.</Text>
+          <Text style={styles.emptyText}>No songs yet.</Text>
         }
       />
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate('SongEditor', {})}>
-        <Text style={styles.fabText}>+</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -138,23 +145,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     marginTop: 40,
-  },
-  fab: {
-    position: 'absolute',
-    right: 20,
-    bottom: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 6,
-  },
-  fabText: {
-    color: Colors.accentForeground,
-    fontSize: 28,
-    fontWeight: 'bold',
-    lineHeight: 30,
   },
 });

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {TouchableOpacity, Text} from 'react-native';
+import {TouchableOpacity, Text, Share, View} from 'react-native';
 import type {Song} from '../types';
 import {loadSongs, updateSong} from '../utils/storage';
 import {Colors} from '../theme';
@@ -23,21 +23,38 @@ export default function SongViewScreen({route, navigation}: any) {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('SongEditor', {song: currentSong})
-          }
-          style={{
-            backgroundColor: Colors.bgTertiary,
-            borderRadius: 8,
-            paddingVertical: 6,
-            paddingHorizontal: 14,
-            marginRight: 16,
-          }}>
-          <Text style={{color: Colors.accent, fontSize: 16}}>
-            Edit
-          </Text>
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+          <TouchableOpacity
+            onPress={() => {
+              const json = JSON.stringify(currentSong, null, 2);
+              Share.share({message: json, title: currentSong.title});
+            }}
+            style={{
+              backgroundColor: Colors.bgTertiary,
+              borderRadius: 8,
+              paddingVertical: 6,
+              paddingHorizontal: 14,
+            }}>
+            <Text style={{color: Colors.accent, fontSize: 14}}>
+              Export
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('SongEditor', {song: currentSong})
+            }
+            style={{
+              backgroundColor: Colors.bgTertiary,
+              borderRadius: 8,
+              paddingVertical: 6,
+              paddingHorizontal: 14,
+              marginRight: 16,
+            }}>
+            <Text style={{color: Colors.accent, fontSize: 14}}>
+              Edit
+            </Text>
+          </TouchableOpacity>
+        </View>
       ),
     });
   }, [navigation, currentSong]);

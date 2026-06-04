@@ -82,6 +82,11 @@ const SongEditor = forwardRef<SongEditorRef, Props>(function SongEditor(
     );
   };
 
+  const handleToggleAllRtl = () => {
+    const allRtl = lines.length > 0 && lines.every(l => l.rtl);
+    setLines(prev => prev.map(l => ({...l, rtl: !allRtl})));
+  };
+
   const handleMoveLineUp = (i: number) => {
     if (i === 0) {return;}
     const newLines = [...lines];
@@ -304,6 +309,13 @@ const SongEditor = forwardRef<SongEditorRef, Props>(function SongEditor(
           style={styles.alignButton}
           onPress={() => adjustCharWidth(0.1)}>
           <Text style={styles.alignButtonText}>+</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.rtlToggleAllButton}
+          onPress={handleToggleAllRtl}>
+          <Text style={styles.rtlToggleAllText}>
+            {lines.length > 0 && lines.every(l => l.rtl) ? '→ LTR' : '← RTL'}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -919,6 +931,17 @@ const styles = StyleSheet.create({
   alignButtonText: {
     color: Colors.accent,
     fontSize: 14,
+    fontWeight: 'bold',
+  },
+  rtlToggleAllButton: {
+    backgroundColor: Colors.bgTertiary,
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  rtlToggleAllText: {
+    color: Colors.accent,
+    fontSize: 13,
     fontWeight: 'bold',
   },
   saveError: {

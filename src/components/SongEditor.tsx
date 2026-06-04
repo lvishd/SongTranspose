@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Modal,
 } from 'react-native';
 import type {Song, Line, Chord} from '../types';
 import {useCharWidth} from '../utils/charWidthContext';
@@ -19,6 +20,7 @@ import LineView from './LineView';
 
 export interface SongEditorRef {
   handleAddLine: () => void;
+  handleAddParagraph: () => void;
   handleSave: () => void;
 }
 
@@ -44,6 +46,8 @@ const SongEditor = forwardRef<SongEditorRef, Props>(function SongEditor(
   );
   const [chordInput, setChordInput] = useState('');
   const [saveError, setSaveError] = useState('');
+  const [paragraphModalVisible, setParagraphModalVisible] = useState(false);
+  const [paragraphText, setParagraphText] = useState('');
 
   useEffect(() => {
     if (initialSong) {
@@ -215,11 +219,33 @@ const SongEditor = forwardRef<SongEditorRef, Props>(function SongEditor(
 
   useImperativeHandle(ref, () => ({
     handleAddLine,
+    handleAddParagraph,
     handleSave,
   }));
 
   const handleCancelChordEdit = () => {
     clearChordState();
+  };
+
+  const handleAddParagraph = () => {
+    setParagraphText('');
+    setParagraphModalVisible(true);
+  };
+
+  const handleParagraphCancel = () => {
+    setParagraphModalVisible(false);
+  };
+
+  const handleParagraphConfirm = () => {
+    const newLines = paragraphText
+      .split('\n')
+      .filter(l => l.trim() !== '')
+      .map(lyrics => ({lyrics, chords: [] as Chord[]}));
+    if (newLines.length > 0) {
+      setLines(prev => [...prev, ...newLines]);
+    }
+    setParagraphModalVisible(false);
+    setParagraphText('');
   };
 
   const adjustCharWidth = (delta: number) => {
@@ -251,6 +277,7 @@ const SongEditor = forwardRef<SongEditorRef, Props>(function SongEditor(
     editingChordAtChar !== null ? 'Place' : 'Rename';
 
   return (
+    <>
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
@@ -532,6 +559,46 @@ const SongEditor = forwardRef<SongEditorRef, Props>(function SongEditor(
         <Text style={styles.saveError}>{saveError}</Text>
       )}
     </ScrollView>
+
+    <Modal
+      visible={paragraphModalVisible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+      onRequestClose={handleParagraphCancel}>
+      <View style={styles.paragraphModalContainer}>
+        <View style={styles.paragraphModalHeader}>
+          <Text style={styles.paragraphModalTitle}>Add Paragraph</Text>
+        </View>
+        <TextInput
+          style={styles.paragraphTextInput}
+          value={paragraphText}
+          onChangeText={setParagraphText}
+          placeholder="Write or paste multiple lines..."
+          placeholderTextColor="#999"
+          multiline
+          textAlignVertical="top"
+          autoFocus
+        />
+        <View style={styles.paragraphModalFooter}>
+          <TouchableOpacity
+            style={styles.paragraphCancelButton}
+            onPress={handleParagraphCancel}>
+            <Text style={styles.paragraphCancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.paragraphAddButton,
+              paragraphText.trim() === '' &&
+                styles.paragraphAddButtonDisabled,
+            ]}
+            onPress={handleParagraphConfirm}
+            disabled={paragraphText.trim() === ''}>
+            <Text style={styles.paragraphAddButtonText}>Add</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+    </>
   );
 });
 
@@ -860,6 +927,70 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 8,
     textAlign: 'center',
+  },
+  paragraphModalContainer: {
+    flex: 1,
+    backgroundColor: Colors.bg,
+  },
+  paragraphModalHeader: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  paragraphModalTitle: {
+    color: Colors.textPrimary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  paragraphTextInput: {
+    flex: 1,
+    margin: 16,
+    backgroundColor: Colors.bgSecondary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    fontSize: 16,
+    fontFamily: 'monospace',
+    color: Colors.textPrimary,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  paragraphModalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    gap: 12,
+  },
+  paragraphCancelButton: {
+    flex: 1,
+    backgroundColor: Colors.bgTertiary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  paragraphCancelButtonText: {
+    color: Colors.textSecondary,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  paragraphAddButton: {
+    flex: 1,
+    backgroundColor: Colors.accent,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  paragraphAddButtonDisabled: {
+    opacity: 0.4,
+  },
+  paragraphAddButtonText: {
+    color: Colors.accentForeground,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

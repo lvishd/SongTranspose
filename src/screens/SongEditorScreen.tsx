@@ -14,6 +14,11 @@ export default function SongEditorScreen({route, navigation}: any) {
       headerRight: () => (
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
+            onPress={() => editorRef.current?.handleAddParagraph()}
+            style={{marginRight: 16}}>
+            <Text style={{color: Colors.accent, fontSize: 16}}>+ §</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => editorRef.current?.handleAddLine()}
             style={{marginRight: 16}}>
             <Text style={{color: Colors.accent, fontSize: 16}}>+ Line</Text>
